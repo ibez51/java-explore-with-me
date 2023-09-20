@@ -8,6 +8,8 @@ import ru.practicum.ewm.statistics.dto.UriCalledDto;
 import ru.practicum.ewm.statistics.dto.UriCalledStatisticDto;
 import ru.practicum.ewm.statistics.service.model.UriCalled;
 
+import java.math.BigInteger;
+import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -33,7 +35,11 @@ public class UriCalledServiceImpl implements UriCalledService {
                                                 LocalDateTime end,
                                                 List<String> uriList,
                                                 boolean isUnique) {
-        List<UriCalled> uriCalledList;
+        if (start.isAfter(end)
+                || start.isEqual(end)) {
+            throw new InvalidParameterException("Start date must be before end date");
+        }
+        List<Object[]> uriCalledList;
 
         if (Objects.isNull(uriList)) {
             uriCalledList = isUnique ?
@@ -46,6 +52,10 @@ public class UriCalledServiceImpl implements UriCalledService {
         }
 
         return uriCalledList.stream()
+                .map(x -> new UriCalled()
+                        .setApp((String) x[0])
+                        .setUri((String) x[1])
+                        .setId(((BigInteger) x[2]).longValue()))
                 .map(uriCalledMapper::toUriCalledStatisticsDto)
                 .collect(Collectors.toList());
     }

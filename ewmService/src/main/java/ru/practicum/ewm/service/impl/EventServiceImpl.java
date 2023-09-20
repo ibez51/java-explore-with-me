@@ -322,7 +322,8 @@ public class EventServiceImpl implements EventService {
         eventShortDtoList = eventShortDtoList.subList(from,
                 Math.min(from + size, eventShortDtoList.size()));
 
-        saveStatistics(eventShortDtoList.stream().map(EventShortDto::getId).collect(Collectors.toList()), httpServletRequest);
+        saveStatistics(eventShortDtoList.stream().map(EventShortDto::getId).collect(Collectors.toList()), false, httpServletRequest);
+        saveStatistics(null, true, httpServletRequest);
 
         return eventShortDtoList;
     }
@@ -334,7 +335,7 @@ public class EventServiceImpl implements EventService {
         Map<Integer, Integer> confirmedRequestsMap = findConfirmedReqByEvent(List.of(eventId));
         Map<Integer, Integer> viewMap = getViewStatistics(List.of(eventId), true);
 
-        saveStatistics(List.of(eventId), httpServletRequest);
+        saveStatistics(List.of(eventId), false, httpServletRequest);
 
         return eventMapper.toFullDto(event,
                 event.getCategory(),
@@ -385,7 +386,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Map<Integer, Integer> getViewStatistics(List<Integer> eventIdList,
                                                    boolean unique) {
-        List<String> uriList = eventIdList.stream().map(x -> "/event/" + x).collect(Collectors.toList());
+        List<String> uriList = eventIdList.stream().map(x -> "/events/" + x).collect(Collectors.toList());
         List<UriCalledStatisticDto> statResult = List.of();
 
         ResponseEntity<List<UriCalledStatisticDto>> statResponse = serviceHTTPClient.getStatistics(LocalDateTime.of(2000, 1, 1, 0, 0),
@@ -402,7 +403,7 @@ public class EventServiceImpl implements EventService {
                 statResult.stream()
                         .collect(Collectors.toMap(
                                 x -> {
-                                    Matcher matcher = Pattern.compile("/event/(.*)").matcher(x.getUri());
+                                    Matcher matcher = Pattern.compile("/events/(.*)").matcher(x.getUri());
                                     return matcher.find() ? Integer.parseInt(matcher.group(1)) : 0;
                                 },
                                 x -> (int) x.getHits())) :
@@ -410,8 +411,14 @@ public class EventServiceImpl implements EventService {
     }
 
     private void saveStatistics(List<Integer> eventIdList,
+                                Boolean commonUri,
                                 HttpServletRequest httpServletRequest) {
-        List<String> uriList = eventIdList.stream().map(x -> "/event/" + x).collect(Collectors.toList());
+        List<String> uriList;
+        if (commonUri) {
+            uriList = List.of("/events");
+        } else {
+            uriList = eventIdList.stream().map(x -> "/events/" + x).collect(Collectors.toList());
+        }
 
         uriList.forEach(uri -> serviceHTTPClient.postHitUri(new UriCalledDto()
                 .setApp("ewm")

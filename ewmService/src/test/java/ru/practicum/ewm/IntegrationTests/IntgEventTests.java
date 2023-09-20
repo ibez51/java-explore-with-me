@@ -103,11 +103,11 @@ public class IntgEventTests {
         ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(HttpStatus.OK);
 
         UriCalledStatisticDto uriCalledStatisticDto1 = new UriCalledStatisticDto();
-        uriCalledStatisticDto1.setUri("/event/" + eventFullDto1.getId());
+        uriCalledStatisticDto1.setUri("/events/" + eventFullDto1.getId());
         uriCalledStatisticDto1.setHits(10);
 
         UriCalledStatisticDto uriCalledStatisticDto2 = new UriCalledStatisticDto();
-        uriCalledStatisticDto2.setUri("/event/" + eventFullDto2.getId());
+        uriCalledStatisticDto2.setUri("/events/" + eventFullDto2.getId());
         uriCalledStatisticDto2.setHits(10);
 
         response = responseBuilder.body(List.of(uriCalledStatisticDto1, uriCalledStatisticDto2));
