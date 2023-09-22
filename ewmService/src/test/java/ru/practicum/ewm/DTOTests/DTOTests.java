@@ -21,10 +21,10 @@ import ru.practicum.ewm.model.EventState;
 import ru.practicum.ewm.model.EventStateAdminAction;
 import ru.practicum.ewm.model.EventStateUserAction;
 import ru.practicum.ewm.model.RequestStatus;
+import ru.practicum.ewm.statistics.client.DateTimeFormatterUtility;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -113,7 +113,7 @@ public class DTOTests {
         assertThat(result).extractingJsonPathNumberValue("$.events.[0].category.id").isEqualTo(compilationDto.getEvents().get(0).getCategory().getId());
         assertThat(result).extractingJsonPathStringValue("$.events.[0].category.name").isEqualTo(compilationDto.getEvents().get(0).getCategory().getName());
         assertThat(result).extractingJsonPathNumberValue("$.events.[0].confirmedRequests").isEqualTo(compilationDto.getEvents().get(0).getConfirmedRequests());
-        assertThat(result).extractingJsonPathStringValue("$.events.[0].eventDate").isEqualTo(compilationDto.getEvents().get(0).getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        assertThat(result).extractingJsonPathStringValue("$.events.[0].eventDate").isEqualTo(compilationDto.getEvents().get(0).getEventDate().format(DateTimeFormatterUtility.FORMATTER));
         assertThat(result).extractingJsonPathNumberValue("$.events.[0].id").isEqualTo(compilationDto.getEvents().get(0).getId());
         assertThat(result).extractingJsonPathNumberValue("$.events.[0].initiator.id").isEqualTo(compilationDto.getEvents().get(0).getInitiator().getId());
         assertThat(result).extractingJsonPathStringValue("$.events.[0].initiator.name").isEqualTo(compilationDto.getEvents().get(0).getInitiator().getName());
@@ -185,9 +185,9 @@ public class DTOTests {
         assertThat(result).extractingJsonPathNumberValue("$.category.id").isEqualTo(eventFullDto.getCategory().getId());
         assertThat(result).extractingJsonPathStringValue("$.category.name").isEqualTo(eventFullDto.getCategory().getName());
         assertThat(result).extractingJsonPathNumberValue("$.confirmedRequests").isEqualTo(eventFullDto.getConfirmedRequests());
-        assertThat(result).extractingJsonPathStringValue("$.createdOn").isEqualTo(eventFullDto.getCreatedOn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        assertThat(result).extractingJsonPathStringValue("$.createdOn").isEqualTo(eventFullDto.getCreatedOn().format(DateTimeFormatterUtility.FORMATTER));
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo(eventFullDto.getDescription());
-        assertThat(result).extractingJsonPathStringValue("$.eventDate").isEqualTo(eventFullDto.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        assertThat(result).extractingJsonPathStringValue("$.eventDate").isEqualTo(eventFullDto.getEventDate().format(DateTimeFormatterUtility.FORMATTER));
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(eventFullDto.getId());
         assertThat(result).extractingJsonPathNumberValue("$.initiator.id").isEqualTo(eventFullDto.getInitiator().getId());
         assertThat(result).extractingJsonPathStringValue("$.initiator.name").isEqualTo(eventFullDto.getInitiator().getName());
@@ -195,7 +195,7 @@ public class DTOTests {
         assertThat(result).extractingJsonPathNumberValue("$.location.lon").isEqualTo((double) Math.round(eventFullDto.getLocation().getLon().doubleValue() * 100) / 100);
         assertThat(result).extractingJsonPathBooleanValue("$.paid").isEqualTo(eventFullDto.getPaid());
         assertThat(result).extractingJsonPathNumberValue("$.participantLimit").isEqualTo(eventFullDto.getParticipantLimit());
-        assertThat(result).extractingJsonPathStringValue("$.publishedOn").isEqualTo(eventFullDto.getPublishedOn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        assertThat(result).extractingJsonPathStringValue("$.publishedOn").isEqualTo(eventFullDto.getPublishedOn().format(DateTimeFormatterUtility.FORMATTER));
         assertThat(result).extractingJsonPathBooleanValue("$.requestModeration").isEqualTo(eventFullDto.getRequestModeration());
         assertThat(result).extractingJsonPathStringValue("$.state").isEqualTo(eventFullDto.getState().name());
         assertThat(result).extractingJsonPathStringValue("$.title").isEqualTo(eventFullDto.getTitle());
@@ -225,7 +225,7 @@ public class DTOTests {
         assertThat(result).extractingJsonPathNumberValue("$.category.id").isEqualTo(eventShortDto.getCategory().getId());
         assertThat(result).extractingJsonPathStringValue("$.category.name").isEqualTo(eventShortDto.getCategory().getName());
         assertThat(result).extractingJsonPathNumberValue("$.confirmedRequests").isEqualTo(eventShortDto.getConfirmedRequests());
-        assertThat(result).extractingJsonPathStringValue("$.eventDate").isEqualTo(eventShortDto.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        assertThat(result).extractingJsonPathStringValue("$.eventDate").isEqualTo(eventShortDto.getEventDate().format(DateTimeFormatterUtility.FORMATTER));
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(eventShortDto.getId());
         assertThat(result).extractingJsonPathNumberValue("$.initiator.id").isEqualTo(eventShortDto.getInitiator().getId());
         assertThat(result).extractingJsonPathStringValue("$.initiator.name").isEqualTo(eventShortDto.getInitiator().getName());
@@ -254,7 +254,7 @@ public class DTOTests {
         assertThat(result).extractingJsonPathStringValue("$.annotation").isEqualTo(newEventDto.getAnnotation());
         assertThat(result).extractingJsonPathNumberValue("$.category").isEqualTo(newEventDto.getCategory());
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo(newEventDto.getDescription());
-        assertThat(result).extractingJsonPathStringValue("$.eventDate").isEqualTo(newEventDto.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        assertThat(result).extractingJsonPathStringValue("$.eventDate").isEqualTo(newEventDto.getEventDate().format(DateTimeFormatterUtility.FORMATTER));
         assertThat(result).extractingJsonPathNumberValue("$.location.lat").isEqualTo((double) Math.round(newEventDto.getLocation().getLat().doubleValue() * 100) / 100);
         assertThat(result).extractingJsonPathNumberValue("$.location.lon").isEqualTo((double) Math.round(newEventDto.getLocation().getLon().doubleValue() * 100) / 100);
         assertThat(result).extractingJsonPathBooleanValue("$.paid").isEqualTo(newEventDto.getPaid());
@@ -284,7 +284,7 @@ public class DTOTests {
         assertThat(result).extractingJsonPathStringValue("$.annotation").isEqualTo(updateEventAdminRequestDto.getAnnotation());
         assertThat(result).extractingJsonPathNumberValue("$.category").isEqualTo(updateEventAdminRequestDto.getCategory());
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo(updateEventAdminRequestDto.getDescription());
-        assertThat(result).extractingJsonPathStringValue("$.eventDate").isEqualTo(updateEventAdminRequestDto.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        assertThat(result).extractingJsonPathStringValue("$.eventDate").isEqualTo(updateEventAdminRequestDto.getEventDate().format(DateTimeFormatterUtility.FORMATTER));
         assertThat(result).extractingJsonPathNumberValue("$.location.lat").isEqualTo((double) Math.round(updateEventAdminRequestDto.getLocation().getLat().doubleValue() * 100) / 100);
         assertThat(result).extractingJsonPathNumberValue("$.location.lon").isEqualTo((double) Math.round(updateEventAdminRequestDto.getLocation().getLon().doubleValue() * 100) / 100);
         assertThat(result).extractingJsonPathBooleanValue("$.paid").isEqualTo(updateEventAdminRequestDto.getPaid());
@@ -315,7 +315,7 @@ public class DTOTests {
         assertThat(result).extractingJsonPathStringValue("$.annotation").isEqualTo(updateEventUserRequestDto.getAnnotation());
         assertThat(result).extractingJsonPathNumberValue("$.category").isEqualTo(updateEventUserRequestDto.getCategory());
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo(updateEventUserRequestDto.getDescription());
-        assertThat(result).extractingJsonPathStringValue("$.eventDate").isEqualTo(updateEventUserRequestDto.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        assertThat(result).extractingJsonPathStringValue("$.eventDate").isEqualTo(updateEventUserRequestDto.getEventDate().format(DateTimeFormatterUtility.FORMATTER));
         assertThat(result).extractingJsonPathNumberValue("$.location.lat").isEqualTo((double) Math.round(updateEventUserRequestDto.getLocation().getLat().doubleValue() * 100) / 100);
         assertThat(result).extractingJsonPathNumberValue("$.location.lon").isEqualTo((double) Math.round(updateEventUserRequestDto.getLocation().getLon().doubleValue() * 100) / 100);
         assertThat(result).extractingJsonPathBooleanValue("$.paid").isEqualTo(updateEventUserRequestDto.getPaid());
@@ -356,13 +356,13 @@ public class DTOTests {
 
         JsonContent<EventRequestStatusUpdateResultDto> result = jsonEventRequestStatusUpdateResultDto.write(eventRequestStatusUpdateResultDto);
 
-        assertThat(result).extractingJsonPathStringValue("$.confirmedRequests.[0].created").isEqualTo(eventRequestStatusUpdateResultDto.getConfirmedRequests().get(0).getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        assertThat(result).extractingJsonPathStringValue("$.confirmedRequests.[0].created").isEqualTo(eventRequestStatusUpdateResultDto.getConfirmedRequests().get(0).getCreated().format(DateTimeFormatterUtility.FORMATTER));
         assertThat(result).extractingJsonPathNumberValue("$.confirmedRequests.[0].event").isEqualTo(eventRequestStatusUpdateResultDto.getConfirmedRequests().get(0).getEvent());
         assertThat(result).extractingJsonPathNumberValue("$.confirmedRequests.[0].id").isEqualTo(eventRequestStatusUpdateResultDto.getConfirmedRequests().get(0).getId());
         assertThat(result).extractingJsonPathNumberValue("$.confirmedRequests.[0].requester").isEqualTo(eventRequestStatusUpdateResultDto.getConfirmedRequests().get(0).getRequester());
         assertThat(result).extractingJsonPathStringValue("$.confirmedRequests.[0].status").isEqualTo(eventRequestStatusUpdateResultDto.getConfirmedRequests().get(0).getStatus().name());
 
-        assertThat(result).extractingJsonPathStringValue("$.rejectedRequests.[0].created").isEqualTo(eventRequestStatusUpdateResultDto.getRejectedRequests().get(0).getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        assertThat(result).extractingJsonPathStringValue("$.rejectedRequests.[0].created").isEqualTo(eventRequestStatusUpdateResultDto.getRejectedRequests().get(0).getCreated().format(DateTimeFormatterUtility.FORMATTER));
         assertThat(result).extractingJsonPathNumberValue("$.rejectedRequests.[0].event").isEqualTo(eventRequestStatusUpdateResultDto.getRejectedRequests().get(0).getEvent());
         assertThat(result).extractingJsonPathNumberValue("$.rejectedRequests.[0].id").isEqualTo(eventRequestStatusUpdateResultDto.getRejectedRequests().get(0).getId());
         assertThat(result).extractingJsonPathNumberValue("$.rejectedRequests.[0].requester").isEqualTo(eventRequestStatusUpdateResultDto.getRejectedRequests().get(0).getRequester());
@@ -380,7 +380,7 @@ public class DTOTests {
 
         JsonContent<ParticipationRequestDto> result = jsonParticipationRequestDto.write(participationRequestDto);
 
-        assertThat(result).extractingJsonPathStringValue("$.created").isEqualTo(participationRequestDto.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        assertThat(result).extractingJsonPathStringValue("$.created").isEqualTo(participationRequestDto.getCreated().format(DateTimeFormatterUtility.FORMATTER));
         assertThat(result).extractingJsonPathNumberValue("$.event").isEqualTo(participationRequestDto.getEvent());
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(participationRequestDto.getId());
         assertThat(result).extractingJsonPathNumberValue("$.requester").isEqualTo(participationRequestDto.getRequester());

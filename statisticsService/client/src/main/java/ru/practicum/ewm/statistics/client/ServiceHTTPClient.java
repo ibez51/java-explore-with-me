@@ -23,7 +23,7 @@ import java.util.Objects;
 @Service
 public class ServiceHTTPClient {
     private final RestTemplate restTemplate;
-    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String DATE_TIME_FORMAT = DateTimeFormatterUtility.PATTERN;
 
     @Autowired
     public ServiceHTTPClient(@Value("${service.url}") String serverUrl,

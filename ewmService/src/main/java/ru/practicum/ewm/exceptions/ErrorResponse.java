@@ -3,6 +3,7 @@ package ru.practicum.ewm.exceptions;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import ru.practicum.ewm.statistics.client.DateTimeFormatterUtility;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +13,6 @@ public class ErrorResponse {
     private String status;
     private String reason;
     private String message;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = DateTimeFormatterUtility.PATTERN)
     private LocalDateTime timestamp;
 }

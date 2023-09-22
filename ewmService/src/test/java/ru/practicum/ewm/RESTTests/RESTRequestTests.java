@@ -10,9 +10,9 @@ import ru.practicum.ewm.controller.priv.RequestPrivateController;
 import ru.practicum.ewm.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.model.RequestStatus;
 import ru.practicum.ewm.service.RequestService;
+import ru.practicum.ewm.statistics.client.DateTimeFormatterUtility;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -44,7 +44,7 @@ public class RESTRequestTests {
         mvc.perform(get("/users/1/requests")
                         .accept(MediaType.ALL_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].created", is(participationRequestDto.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))))
+                .andExpect(jsonPath("$.[0].created", is(participationRequestDto.getCreated().format(DateTimeFormatterUtility.FORMATTER))))
                 .andExpect(jsonPath("$.[0].event", is(participationRequestDto.getEvent()), Integer.class))
                 .andExpect(jsonPath("$.[0].id", is(participationRequestDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.[0].requester", is(participationRequestDto.getRequester()), Integer.class))

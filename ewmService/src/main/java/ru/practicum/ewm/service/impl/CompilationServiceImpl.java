@@ -26,7 +26,6 @@ public class CompilationServiceImpl implements CompilationService {
     private final EventService eventService;
 
     @Override
-    @Transactional
     public List<CompilationDto> getCompilations(Boolean pinned,
                                                 Integer from,
                                                 Integer size) {
@@ -42,7 +41,6 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    @Transactional
     public CompilationDto getCompilationById(Integer compilationId) {
         Compilation compilation = findCompilationById(compilationId);
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import ru.practicum.ewm.model.EventStateUserAction;
+import ru.practicum.ewm.statistics.client.DateTimeFormatterUtility;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.Size;
@@ -17,7 +18,7 @@ public class UpdateEventUserRequestDto {
     private Integer category;
     @Size(min = 20, max = 7000)
     private String description;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = DateTimeFormatterUtility.PATTERN)
     @Future
     private LocalDateTime eventDate;
     private Location location;

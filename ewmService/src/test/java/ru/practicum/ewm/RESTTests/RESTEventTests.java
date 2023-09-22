@@ -18,10 +18,10 @@ import ru.practicum.ewm.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.dto.user.UserShortDto;
 import ru.practicum.ewm.model.*;
 import ru.practicum.ewm.service.EventService;
+import ru.practicum.ewm.statistics.client.DateTimeFormatterUtility;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -127,15 +127,15 @@ public class RESTEventTests {
                 .andExpect(jsonPath("$.category.id", is(eventFullDto.getCategory().getId()), Integer.class))
                 .andExpect(jsonPath("$.category.name", is(eventFullDto.getCategory().getName())))
                 .andExpect(jsonPath("$.confirmedRequests", is(eventFullDto.getConfirmedRequests()), Integer.class))
-                .andExpect(jsonPath("$.createdOn", is(eventFullDto.getCreatedOn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))))
+                .andExpect(jsonPath("$.createdOn", is(eventFullDto.getCreatedOn().format(DateTimeFormatterUtility.FORMATTER))))
                 .andExpect(jsonPath("$.description", is(eventFullDto.getDescription())))
-                .andExpect(jsonPath("$.eventDate", is(eventFullDto.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))))
+                .andExpect(jsonPath("$.eventDate", is(eventFullDto.getEventDate().format(DateTimeFormatterUtility.FORMATTER))))
                 .andExpect(jsonPath("$.id", is(eventFullDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.initiator.id", is(eventFullDto.getInitiator().getId()), Integer.class))
                 .andExpect(jsonPath("$.initiator.name", is(eventFullDto.getInitiator().getName())))
                 .andExpect(jsonPath("$.paid", is(eventFullDto.getPaid())))
                 .andExpect(jsonPath("$.participantLimit", is(eventFullDto.getParticipantLimit()), Integer.class))
-                .andExpect(jsonPath("$.publishedOn", is(eventFullDto.getPublishedOn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))))
+                .andExpect(jsonPath("$.publishedOn", is(eventFullDto.getPublishedOn().format(DateTimeFormatterUtility.FORMATTER))))
                 .andExpect(jsonPath("$.requestModeration", is(eventFullDto.getRequestModeration())))
                 .andExpect(jsonPath("$.state", is(eventFullDto.getState().name())))
                 .andExpect(jsonPath("$.title", is(eventFullDto.getTitle())))
@@ -155,7 +155,7 @@ public class RESTEventTests {
                 .andExpect(jsonPath("$.[0].category.id", is(eventShortDto.getCategory().getId()), Integer.class))
                 .andExpect(jsonPath("$.[0].category.name", is(eventShortDto.getCategory().getName())))
                 .andExpect(jsonPath("$.[0].confirmedRequests", is(eventShortDto.getConfirmedRequests()), Integer.class))
-                .andExpect(jsonPath("$.[0].eventDate", is(eventShortDto.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))))
+                .andExpect(jsonPath("$.[0].eventDate", is(eventShortDto.getEventDate().format(DateTimeFormatterUtility.FORMATTER))))
                 .andExpect(jsonPath("$.[0].id", is(eventShortDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.[0].initiator.id", is(eventShortDto.getInitiator().getId()), Integer.class))
                 .andExpect(jsonPath("$.[0].initiator.name", is(eventShortDto.getInitiator().getName())))
@@ -200,15 +200,15 @@ public class RESTEventTests {
                 .andExpect(jsonPath("$.category.id", is(eventFullDto.getCategory().getId()), Integer.class))
                 .andExpect(jsonPath("$.category.name", is(eventFullDto.getCategory().getName())))
                 .andExpect(jsonPath("$.confirmedRequests", is(eventFullDto.getConfirmedRequests()), Integer.class))
-                .andExpect(jsonPath("$.createdOn", is(eventFullDto.getCreatedOn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))))
+                .andExpect(jsonPath("$.createdOn", is(eventFullDto.getCreatedOn().format(DateTimeFormatterUtility.FORMATTER))))
                 .andExpect(jsonPath("$.description", is(eventFullDto.getDescription())))
-                .andExpect(jsonPath("$.eventDate", is(eventFullDto.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))))
+                .andExpect(jsonPath("$.eventDate", is(eventFullDto.getEventDate().format(DateTimeFormatterUtility.FORMATTER))))
                 .andExpect(jsonPath("$.id", is(eventFullDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.initiator.id", is(eventFullDto.getInitiator().getId()), Integer.class))
                 .andExpect(jsonPath("$.initiator.name", is(eventFullDto.getInitiator().getName())))
                 .andExpect(jsonPath("$.paid", is(eventFullDto.getPaid())))
                 .andExpect(jsonPath("$.participantLimit", is(eventFullDto.getParticipantLimit()), Integer.class))
-                .andExpect(jsonPath("$.publishedOn", is(eventFullDto.getPublishedOn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))))
+                .andExpect(jsonPath("$.publishedOn", is(eventFullDto.getPublishedOn().format(DateTimeFormatterUtility.FORMATTER))))
                 .andExpect(jsonPath("$.requestModeration", is(eventFullDto.getRequestModeration())))
                 .andExpect(jsonPath("$.state", is(eventFullDto.getState().name())))
                 .andExpect(jsonPath("$.title", is(eventFullDto.getTitle())))
@@ -278,7 +278,7 @@ public class RESTEventTests {
         mvc.perform(get("/users/1/events/1/requests")
                         .accept(MediaType.ALL_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].created", is(participationRequestDto.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))))
+                .andExpect(jsonPath("$.[0].created", is(participationRequestDto.getCreated().format(DateTimeFormatterUtility.FORMATTER))))
                 .andExpect(jsonPath("$.[0].event", is(participationRequestDto.getEvent()), Integer.class))
                 .andExpect(jsonPath("$.[0].id", is(participationRequestDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.[0].requester", is(participationRequestDto.getRequester()), Integer.class))
@@ -314,12 +314,12 @@ public class RESTEventTests {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(mapper.writeValueAsString(eventRequestStatusUpdateRequestDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.confirmedRequests.[0].created", is(eventRequestStatusUpdateResultDto.getConfirmedRequests().get(0).getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))))
+                .andExpect(jsonPath("$.confirmedRequests.[0].created", is(eventRequestStatusUpdateResultDto.getConfirmedRequests().get(0).getCreated().format(DateTimeFormatterUtility.FORMATTER))))
                 .andExpect(jsonPath("$.confirmedRequests.[0].event", is(eventRequestStatusUpdateResultDto.getConfirmedRequests().get(0).getEvent()), Integer.class))
                 .andExpect(jsonPath("$.confirmedRequests.[0].id", is(eventRequestStatusUpdateResultDto.getConfirmedRequests().get(0).getId()), Integer.class))
                 .andExpect(jsonPath("$.confirmedRequests.[0].requester", is(eventRequestStatusUpdateResultDto.getConfirmedRequests().get(0).getRequester()), Integer.class))
                 .andExpect(jsonPath("$.confirmedRequests.[0].status", is(eventRequestStatusUpdateResultDto.getConfirmedRequests().get(0).getStatus().name())))
-                .andExpect(jsonPath("$.rejectedRequests.[0].created", is(eventRequestStatusUpdateResultDto.getRejectedRequests().get(0).getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))))
+                .andExpect(jsonPath("$.rejectedRequests.[0].created", is(eventRequestStatusUpdateResultDto.getRejectedRequests().get(0).getCreated().format(DateTimeFormatterUtility.FORMATTER))))
                 .andExpect(jsonPath("$.rejectedRequests.[0].event", is(eventRequestStatusUpdateResultDto.getRejectedRequests().get(0).getEvent()), Integer.class))
                 .andExpect(jsonPath("$.rejectedRequests.[0].id", is(eventRequestStatusUpdateResultDto.getRejectedRequests().get(0).getId()), Integer.class))
                 .andExpect(jsonPath("$.rejectedRequests.[0].requester", is(eventRequestStatusUpdateResultDto.getRejectedRequests().get(0).getRequester()), Integer.class))

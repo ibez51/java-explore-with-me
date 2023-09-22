@@ -3,6 +3,7 @@ package ru.practicum.ewm.dto.event;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import ru.practicum.ewm.statistics.client.DateTimeFormatterUtility;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
@@ -22,7 +23,7 @@ public class NewEventDto {
     @Size(min = 20, max = 7000)
     private String description;
     @Future
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = DateTimeFormatterUtility.PATTERN)
     private LocalDateTime eventDate;
     @NotNull
     private Location location;

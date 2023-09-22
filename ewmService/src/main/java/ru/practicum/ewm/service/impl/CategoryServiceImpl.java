@@ -21,7 +21,6 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
 
     @Override
-    @Transactional
     public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
         return categoryMapper.toDto(categoryRepository.save(categoryMapper.toCategory(newCategoryDto)));
     }
