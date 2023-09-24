@@ -17,6 +17,8 @@ import ru.practicum.ewm.exceptions.InvalidParameterException;
 import ru.practicum.ewm.model.*;
 import ru.practicum.ewm.service.CategoryService;
 import ru.practicum.ewm.service.EventService;
+import ru.practicum.ewm.service.RatingService;
+import ru.practicum.ewm.service.UserService;
 import ru.practicum.ewm.service.specification.EventQuerySpecification;
 import ru.practicum.ewm.statistics.client.ServiceHTTPClient;
 import ru.practicum.ewm.statistics.dto.UriCalledDto;
@@ -36,6 +38,8 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final CategoryService categoryService;
+    private final UserService userService;
+    private final RatingService ratingService;
     private final RequestRepository requestRepository;
     private final RequestMapper requestMapper;
     private final ServiceHTTPClient serviceHTTPClient;
@@ -53,13 +57,19 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
         Map<Integer, Integer> confirmedRequestsMap = findConfirmedReqByEvent(eventIdList);
         Map<Integer, Integer> viewMap = getViewStatistics(eventIdList, true);
+        Map<Integer, Integer> ratingMap = ratingService.calcRateForEventList(eventIdList);
+        Map<Integer, Integer> userRatingMap = ratingService.calcRateForUserList(eventList.stream()
+                .map(x -> x.getInitiator().getId())
+                .collect(Collectors.toList()));
 
         return eventList.stream()
                 .map(x -> eventMapper.toShortDto(x,
                         x.getCategory(),
                         x.getInitiator(),
                         confirmedRequestsMap.getOrDefault(x.getId(), 0),
-                        viewMap.getOrDefault(x.getId(), 0)))
+                        viewMap.getOrDefault(x.getId(), 0),
+                        ratingMap.getOrDefault(x.getId(), 0),
+                        userRatingMap.getOrDefault(x.getInitiator().getId(), 0)))
                 .collect(Collectors.toList());
     }
 
@@ -72,7 +82,15 @@ public class EventServiceImpl implements EventService {
         Event event = eventMapper.toEvent(userId, newEventDto, newEventDto.getLocation(), category);
         event = eventRepository.save(event);
 
-        return eventMapper.toFullDto(event, event.getCategory(), event.getInitiator(), 0, 0);
+        Map<Integer, Integer> userRatingMap = ratingService.calcRateForUserList(List.of(userId));
+
+        return eventMapper.toFullDto(event,
+                event.getCategory(),
+                event.getInitiator(),
+                0,
+                0,
+                0,
+                userRatingMap.getOrDefault(userId, 0));
     }
 
     @Override
@@ -82,12 +100,16 @@ public class EventServiceImpl implements EventService {
 
         Map<Integer, Integer> confirmedRequestsMap = findConfirmedReqByEvent(List.of(eventId));
         Map<Integer, Integer> viewMap = getViewStatistics(List.of(eventId), true);
+        Map<Integer, Integer> ratingMap = ratingService.calcRateForEventList(List.of(eventId));
+        Map<Integer, Integer> userRatingMap = ratingService.calcRateForUserList(List.of(userId));
 
         return eventMapper.toFullDto(event,
                 event.getCategory(),
                 event.getInitiator(),
                 confirmedRequestsMap.getOrDefault(eventId, 0),
-                viewMap.getOrDefault(eventId, 0));
+                viewMap.getOrDefault(eventId, 0),
+                ratingMap.getOrDefault(eventId, 0),
+                userRatingMap.getOrDefault(userId, 0));
     }
 
     @Override
@@ -131,12 +153,16 @@ public class EventServiceImpl implements EventService {
 
         Map<Integer, Integer> confirmedRequestsMap = findConfirmedReqByEvent(List.of(eventId));
         Map<Integer, Integer> viewMap = getViewStatistics(List.of(eventId), true);
+        Map<Integer, Integer> ratingMap = ratingService.calcRateForEventList(List.of(eventId));
+        Map<Integer, Integer> userRatingMap = ratingService.calcRateForUserList(List.of(userId));
 
         return eventMapper.toFullDto(event,
                 event.getCategory(),
                 event.getInitiator(),
                 confirmedRequestsMap.getOrDefault(eventId, 0),
-                viewMap.getOrDefault(eventId, 0));
+                viewMap.getOrDefault(eventId, 0),
+                ratingMap.getOrDefault(eventId, 0),
+                userRatingMap.getOrDefault(userId, 0));
     }
 
     @Override
@@ -207,13 +233,19 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
         Map<Integer, Integer> confirmedRequestsMap = findConfirmedReqByEvent(eventIdList);
         Map<Integer, Integer> viewMap = getViewStatistics(eventIdList, true);
+        Map<Integer, Integer> ratingMap = ratingService.calcRateForEventList(eventIdList);
+        Map<Integer, Integer> userRatingMap = ratingService.calcRateForUserList(events.stream()
+                .map(x -> x.getInitiator().getId())
+                .collect(Collectors.toList()));
 
         return events.stream()
                 .map(x -> eventMapper.toFullDto(x,
                         x.getCategory(),
                         x.getInitiator(),
                         confirmedRequestsMap.getOrDefault(x.getId(), 0),
-                        viewMap.getOrDefault(x.getId(), 0)))
+                        viewMap.getOrDefault(x.getId(), 0),
+                        ratingMap.getOrDefault(x.getId(), 0),
+                        userRatingMap.getOrDefault(x.getInitiator().getId(), 0)))
                 .collect(Collectors.toList());
     }
 
@@ -265,12 +297,40 @@ public class EventServiceImpl implements EventService {
 
         Map<Integer, Integer> confirmedRequestsMap = findConfirmedReqByEvent(List.of(eventId));
         Map<Integer, Integer> viewMap = getViewStatistics(List.of(eventId), true);
+        Map<Integer, Integer> ratingMap = ratingService.calcRateForEventList(List.of(eventId));
+        Map<Integer, Integer> userRatingMap = ratingService.calcRateForUserList(List.of(event.getInitiator().getId()));
 
         return eventMapper.toFullDto(event,
                 event.getCategory(),
                 event.getInitiator(),
                 confirmedRequestsMap.getOrDefault(eventId, 0),
-                viewMap.getOrDefault(eventId, 0));
+                viewMap.getOrDefault(eventId, 0),
+                ratingMap.getOrDefault(eventId, 0),
+                userRatingMap.getOrDefault(event.getInitiator().getId(), 0));
+    }
+
+    @Override
+    @Transactional
+    public EventFullDto updateEventDateForce(Integer eventId,
+                                             LocalDateTime eventDate) {
+        Event event = findEventById(eventId);
+
+        event = event.setEventDate(eventDate);
+
+        event = eventRepository.save(event);
+
+        Map<Integer, Integer> confirmedRequestsMap = findConfirmedReqByEvent(List.of(eventId));
+        Map<Integer, Integer> viewMap = getViewStatistics(List.of(eventId), true);
+        Map<Integer, Integer> ratingMap = ratingService.calcRateForEventList(List.of(eventId));
+        Map<Integer, Integer> userRatingMap = ratingService.calcRateForUserList(List.of(event.getInitiator().getId()));
+
+        return eventMapper.toFullDto(event,
+                event.getCategory(),
+                event.getInitiator(),
+                confirmedRequestsMap.getOrDefault(eventId, 0),
+                viewMap.getOrDefault(eventId, 0),
+                ratingMap.getOrDefault(eventId, 0),
+                userRatingMap.getOrDefault(event.getInitiator().getId(), 0));
     }
 
     @Override
@@ -297,6 +357,10 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
         Map<Integer, Integer> confirmedRequestsMap = findConfirmedReqByEvent(eventIdList);
         Map<Integer, Integer> viewMap = getViewStatistics(eventIdList, true);
+        Map<Integer, Integer> ratingMap = ratingService.calcRateForEventList(eventIdList);
+        Map<Integer, Integer> userRatingMap = ratingService.calcRateForUserList(events.stream()
+                .map(x -> x.getInitiator().getId())
+                .collect(Collectors.toList()));
 
         if (Objects.nonNull(onlyAvailable)
                 && onlyAvailable) {
@@ -311,7 +375,9 @@ public class EventServiceImpl implements EventService {
                         x.getCategory(),
                         x.getInitiator(),
                         confirmedRequestsMap.getOrDefault(x.getId(), 0),
-                        viewMap.getOrDefault(x.getId(), 0)))
+                        viewMap.getOrDefault(x.getId(), 0),
+                        ratingMap.getOrDefault(x.getId(), 0),
+                        userRatingMap.getOrDefault(x.getInitiator().getId(), 0)))
                 .collect(Collectors.toList());
 
         if (Objects.nonNull(sort)
@@ -334,6 +400,8 @@ public class EventServiceImpl implements EventService {
 
         Map<Integer, Integer> confirmedRequestsMap = findConfirmedReqByEvent(List.of(eventId));
         Map<Integer, Integer> viewMap = getViewStatistics(List.of(eventId), true);
+        Map<Integer, Integer> ratingMap = ratingService.calcRateForEventList(List.of(eventId));
+        Map<Integer, Integer> userRatingMap = ratingService.calcRateForUserList(List.of(event.getInitiator().getId()));
 
         saveStatistics(List.of(eventId), false, httpServletRequest);
 
@@ -341,7 +409,9 @@ public class EventServiceImpl implements EventService {
                 event.getCategory(),
                 event.getInitiator(),
                 confirmedRequestsMap.getOrDefault(eventId, 0),
-                viewMap.getOrDefault(eventId, 0));
+                viewMap.getOrDefault(eventId, 0),
+                ratingMap.getOrDefault(eventId, 0),
+                userRatingMap.getOrDefault(event.getInitiator().getId(), 0));
     }
 
     @Override
@@ -425,5 +495,60 @@ public class EventServiceImpl implements EventService {
                 .setUri(uri)
                 .setIp(httpServletRequest.getRemoteAddr())
                 .setTimestamp(LocalDateTime.now())));
+    }
+
+    @Override
+    public EventFullDto rateEvent(Integer userId,
+                                  Integer eventId,
+                                  Boolean isGood) {
+        Event event = findEventById(eventId);
+        User user = userService.findUserById(userId);
+
+        if (event.getState() != EventState.PUBLISHED
+                || event.getEventDate().plusHours(2).isAfter(LocalDateTime.now())
+                || !requestRepository.isRequestByUserAndEventAndStatusExists(userId, eventId, RequestStatus.CONFIRMED.name())) {
+            throw new DataIntegrityViolationException("You can't rate this event");
+        }
+
+        ratingService.createOrUpdateRate(event, user, isGood);
+
+        event = findEventByIdAndState(eventId, EventState.PUBLISHED);
+
+        Map<Integer, Integer> confirmedRequestsMap = findConfirmedReqByEvent(List.of(eventId));
+        Map<Integer, Integer> viewMap = getViewStatistics(List.of(eventId), true);
+        Map<Integer, Integer> ratingMap = ratingService.calcRateForEventList(List.of(eventId));
+        Map<Integer, Integer> userRatingMap = ratingService.calcRateForUserList(List.of(event.getInitiator().getId()));
+
+        return eventMapper.toFullDto(event,
+                event.getCategory(),
+                event.getInitiator(),
+                confirmedRequestsMap.getOrDefault(eventId, 0),
+                viewMap.getOrDefault(eventId, 0),
+                ratingMap.getOrDefault(eventId, 0),
+                userRatingMap.getOrDefault(event.getInitiator().getId(), 0));
+    }
+
+    @Override
+    public EventFullDto deleteRate(Integer userId,
+                                   Integer eventId) {
+        Event event = findEventByIdAndState(eventId, EventState.PUBLISHED);
+        User user = userService.findUserById(userId);
+
+        ratingService.removeRate(event, user);
+
+        event = findEventByIdAndState(eventId, EventState.PUBLISHED);
+
+        Map<Integer, Integer> confirmedRequestsMap = findConfirmedReqByEvent(List.of(eventId));
+        Map<Integer, Integer> viewMap = getViewStatistics(List.of(eventId), true);
+        Map<Integer, Integer> ratingMap = ratingService.calcRateForEventList(List.of(eventId));
+        Map<Integer, Integer> userRatingMap = ratingService.calcRateForUserList(List.of(event.getInitiator().getId()));
+
+        return eventMapper.toFullDto(event,
+                event.getCategory(),
+                event.getInitiator(),
+                confirmedRequestsMap.getOrDefault(eventId, 0),
+                viewMap.getOrDefault(eventId, 0),
+                ratingMap.getOrDefault(eventId, 0),
+                userRatingMap.getOrDefault(event.getInitiator().getId(), 0));
     }
 }

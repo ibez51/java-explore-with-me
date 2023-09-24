@@ -48,10 +48,12 @@ public class RESTCompilationTests {
                     .setId(1)
                     .setInitiator(new UserShortDto()
                             .setId(1)
-                            .setName("Name"))
+                            .setName("Name")
+                            .setRating(100))
                     .setPaid(true)
                     .setTitle("Title")
-                    .setViews(10)))
+                    .setViews(10)
+                    .setRating(99)))
             .setId(1)
             .setPinned(true)
             .setTitle("Title");
@@ -80,9 +82,11 @@ public class RESTCompilationTests {
                 .andExpect(jsonPath("$.events.[0].id", is(compilationDto.getEvents().get(0).getId()), Integer.class))
                 .andExpect(jsonPath("$.events.[0].initiator.id", is(compilationDto.getEvents().get(0).getInitiator().getId()), Integer.class))
                 .andExpect(jsonPath("$.events.[0].initiator.name", is(compilationDto.getEvents().get(0).getInitiator().getName())))
+                .andExpect(jsonPath("$.events.[0].initiator.rating", is(compilationDto.getEvents().get(0).getInitiator().getRating()), Integer.class))
                 .andExpect(jsonPath("$.events.[0].paid", is(compilationDto.getEvents().get(0).getPaid())))
                 .andExpect(jsonPath("$.events.[0].title", is(compilationDto.getEvents().get(0).getTitle())))
                 .andExpect(jsonPath("$.events.[0].views", is(compilationDto.getEvents().get(0).getViews()), Integer.class))
+                .andExpect(jsonPath("$.events.[0].rating", is(compilationDto.getEvents().get(0).getRating()), Integer.class))
                 .andExpect(jsonPath("$.pinned", is(compilationDto.getPinned())))
                 .andExpect(jsonPath("$.title", is(compilationDto.getTitle())));
     }

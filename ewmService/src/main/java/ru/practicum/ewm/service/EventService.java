@@ -71,4 +71,10 @@ public interface EventService {
 
     Map<Integer, Integer> getViewStatistics(List<Integer> eventIdList,
                                             boolean unique);
+
+    EventFullDto rateEvent(Integer userId, Integer eventId, Boolean isGood);
+
+    EventFullDto deleteRate(Integer userId, Integer eventId);
+
+    EventFullDto updateEventDateForce(Integer eventId, LocalDateTime eventDate);
 }

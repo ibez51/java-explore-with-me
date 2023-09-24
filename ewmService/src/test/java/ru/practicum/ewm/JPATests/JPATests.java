@@ -29,6 +29,7 @@ class JPATests {
     private RequestRepository requestRepository;
     @Autowired
     private CompilationRepository compilationRepository;
+    @Autowired RatingRepository ratingRepository;
     User user1;
     User user2;
     Category category1;
@@ -37,6 +38,7 @@ class JPATests {
     Event event2;
     Request request1;
     Compilation compilation1;
+    Rating rating;
 
     @BeforeEach
     void setUp() {
@@ -76,6 +78,11 @@ class JPATests {
                 .setTitle("compilation1")
                 .setPinned(false)
                 .setEventList(List.of(event1, event2)));
+        rating = ratingRepository.save(new Rating()
+                .setRatingId(new RatingId(event1.getId(), user2.getId()))
+                        .setEvent(event1)
+                        .setOwner(user2)
+                .setRatingValue(1));
     }
 
     @Test
@@ -86,6 +93,7 @@ class JPATests {
         Assertions.assertNotNull(eventRepository);
         Assertions.assertNotNull(requestRepository);
         Assertions.assertNotNull(compilationRepository);
+        Assertions.assertNotNull(ratingRepository);
     }
 
     @Test
@@ -124,6 +132,8 @@ class JPATests {
         assertEquals(1, requestRepository.findConfirmedReqByEvent(List.of(event1.getId())).size());
 
         assertTrue(requestRepository.isRequestByUserAndEventExists(user2.getId(), event1.getId()));
+
+        assertTrue(requestRepository.isRequestByUserAndEventAndStatusExists(user2.getId(), event1.getId(), RequestStatus.CONFIRMED.name()));
     }
 
     @Test
@@ -131,5 +141,13 @@ class JPATests {
         assertEquals(1, compilationRepository.findByPinnedOrderByIdAsc(false, PageRequest.of(0, 1)).getContent().size());
 
         assertTrue(compilationRepository.isCompilationExists(compilation1.getId()));
+    }
+
+    @Test
+    public void testRatingRepository() {
+        assertEquals(1, ratingRepository.calcRateForEventList(List.of(event1.getId())).size());
+
+        assertEquals(1, ratingRepository.calcRateForUserList(List.of(user1.getId())).size());
+        assertEquals(0, ratingRepository.calcRateForUserList(List.of(user2.getId())).size());
     }
 }

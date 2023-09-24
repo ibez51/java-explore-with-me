@@ -8,4 +8,5 @@ import lombok.experimental.Accessors;
 public class UserShortDto {
     private Integer id;
     private String name;
+    private Integer rating;
 }

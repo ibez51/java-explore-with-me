@@ -1,0 +1,3340 @@
+{
+	"info": {
+		"_postman_id": "6350a00f-d2e9-46a2-8895-22b2a40732ca",
+		"name": "Explore With Me - Rating feature",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "7517213"
+	},
+	"item": [
+		{
+			"name": "Validation",
+			"item": [
+				{
+					"name": "Ошибка: Отсутствует обязательный параметр isGood",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"        \r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"        \r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.be.badRequest;    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId/rate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Отсутствует обязательный параметр isGood",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"        \r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"        \r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.be.badRequest;    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId/rate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Эвент не существует",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"        \r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"        \r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.be.notFound;    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/99999999/rate?isGood=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								"99999999",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Эвент не существует",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"        \r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"        \r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.be.notFound;    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/99999999/rate?isGood=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								"99999999",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Эвент не существует",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"        \r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"        \r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Добавляем оценку\");\r",
+									"        const rateEvent = await api.rateEvent(event.id, raterUser.id, true);\r",
+									"        console.log(\"Оценка добавлена. Рейтинг эвента \" + rateEvent.rating);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.be.notFound;    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/99999999/rate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								"99999999",
+								"rate"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Пользователь не существует",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"        \r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"        \r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Добавляем оценку\");\r",
+									"        const rateEvent = await api.rateEvent(event.id, raterUser.id, true);\r",
+									"        console.log(\"Оценка добавлена. Рейтинг эвента \" + rateEvent.rating);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.be.notFound;    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/99999999/events/:eventId/rate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"99999999",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Пользователь не существует",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"        \r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"        \r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.be.notFound;    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/99999999/events/:eventId/rate?isGood=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"99999999",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Пользователь не существует",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"\r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.be.notFound;    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/99999999/events/:eventId/rate?isGood=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"99999999",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Эвент не опубликован",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"\r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(409);    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId/rate?isGood=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Эвент не опубликован",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"\r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(409);    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId/rate?isGood=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Эвент ещё не прошёл",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"\r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(409);    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId/rate?isGood=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Эвент ещё не прошёл",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"\r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(409);    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId/rate?isGood=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Пользователь не в списке подтверждённых участников",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(409);    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId/rate?isGood=false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "false"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Пользователь не в списке подтверждённых участников",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(409);    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId/rate?isGood=false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "false"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Пытаемся поставить оценку своему эвенту",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"\r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        pm.collectionVariables.set('uid', user.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(409);    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId/rate?isGood=false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "false"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ошибка: Пытаемся поставить оценку своему эвенту",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"\r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        pm.collectionVariables.set('uid', user.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(409);    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId/rate?isGood=false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "false"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "General",
+			"item": [
+				{
+					"name": "Добавление оценки",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Пользователь должен содержать поля: id, annotation, rating\", function () {\r",
+									"pm.expect(target).to.have.property('id');\r",
+									"pm.expect(target).to.have.property('annotation');\r",
+									"pm.expect(target).to.have.property('rating');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(target.id).to.not.be.null;\r",
+									"    pm.expect(100).equal(target.rating, 'Рейтинг эвента должен быть равен 100');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId/rate?isGood=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавление нескольких оценок от разных пользователей",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        //+Первый пользователь\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser1 = await api.addUser(rnd.getUser());\r",
+									"        //pm.collectionVariables.set('uid', raterUser1.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser1.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        let eventReq = await api.publishParticipationRequest(event.id, raterUser1.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        //-Первый пользователь\r",
+									"        \r",
+									"        //+Второй пользователь\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser2 = await api.addUser(rnd.getUser());\r",
+									"        //pm.collectionVariables.set('uid', raterUser2.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser2.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        eventReq = await api.publishParticipationRequest(event.id, raterUser2.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        //-Второй пользователь\r",
+									"        \r",
+									"        //+Третий пользователь\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser3 = await api.addUser(rnd.getUser());\r",
+									"        //pm.collectionVariables.set('uid', raterUser3.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser3.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        eventReq = await api.publishParticipationRequest(event.id, raterUser3.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        //-Третий пользователь\r",
+									"        \r",
+									"        //+Четвертый пользователь\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser4 = await api.addUser(rnd.getUser());\r",
+									"        //pm.collectionVariables.set('uid', raterUser4.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser4.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        eventReq = await api.publishParticipationRequest(event.id, raterUser4.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        //-Четвертый пользователь\r",
+									"        \r",
+									"        //+Пятый пользователь\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser5 = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser5.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        eventReq = await api.publishParticipationRequest(event.id, raterUser5.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        pm.collectionVariables.set('uid', raterUser5.id);\r",
+									"        //-Пятый пользователь\r",
+									"\r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Добавляем оценку\");\r",
+									"        let rateEvent = await api.rateEvent(event.id, raterUser1.id, true);\r",
+									"        rateEvent = await api.rateEvent(event.id, raterUser2.id, true);\r",
+									"        rateEvent = await api.rateEvent(event.id, raterUser3.id, false);\r",
+									"        rateEvent = await api.rateEvent(event.id, raterUser4.id, true);\r",
+									"        console.log(\"Оценка добавлена. Рейтинг эвента \" + rateEvent.rating);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Пользователь должен содержать поля: id, annotation, rating\", function () {\r",
+									"pm.expect(target).to.have.property('id');\r",
+									"pm.expect(target).to.have.property('annotation');\r",
+									"pm.expect(target).to.have.property('rating');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(target.id).to.not.be.null;\r",
+									"    pm.expect(80).equal(target.rating, 'Рейтинг эвента должен быть равен 80');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId/rate?isGood=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавление нескольких оценок от разных пользователей в разные эвенты одного пользователя",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', user.id);\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        //+Первый пользователь\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser1 = await api.addUser(rnd.getUser());\r",
+									"        //pm.collectionVariables.set('uid', raterUser1.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser1.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        let eventReq = await api.publishParticipationRequest(event.id, raterUser1.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        //-Первый пользователь\r",
+									"        \r",
+									"        //+Второй пользователь\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser2 = await api.addUser(rnd.getUser());\r",
+									"        //pm.collectionVariables.set('uid', raterUser2.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser2.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        eventReq = await api.publishParticipationRequest(event.id, raterUser2.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        //-Второй пользователь\r",
+									"        \r",
+									"        //+Третий пользователь\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser3 = await api.addUser(rnd.getUser());\r",
+									"        //pm.collectionVariables.set('uid', raterUser3.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser3.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        eventReq = await api.publishParticipationRequest(event.id, raterUser3.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        //-Третий пользователь\r",
+									"        \r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody2 = rnd.getEvent(category.id);\r",
+									"        eventBody2['requestModeration'] = true\r",
+									"        eventBody2['participantLimit'] = 10\r",
+									"        let event2 = await api.addEvent(user.id, eventBody2);\r",
+									"        console.log(\"Эвент \" + event2.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event2 = await api.publishEvent(event2.id);\r",
+									"        console.log(\"Эвент \" + event2.id);\r",
+									"        \r",
+									"        //+Четвертый пользователь\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser4 = await api.addUser(rnd.getUser());\r",
+									"        //pm.collectionVariables.set('uid', raterUser4.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser4.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        eventReq = await api.publishParticipationRequest(event2.id, raterUser4.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event2.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        //-Четвертый пользователь\r",
+									"        \r",
+									"        //+Пятый пользователь\r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser5 = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser5.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        eventReq = await api.publishParticipationRequest(event2.id, raterUser5.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event2.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        //-Пятый пользователь\r",
+									"        \r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event2.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event2.id);\r",
+									"        \r",
+									"        console.log(\"Добавляем оценку\");\r",
+									"        let rateEvent = await api.rateEvent(event.id, raterUser1.id, true);\r",
+									"        rateEvent = await api.rateEvent(event.id, raterUser2.id, true);\r",
+									"        rateEvent = await api.rateEvent(event.id, raterUser3.id, false);\r",
+									"        rateEvent = await api.rateEvent(event2.id, raterUser4.id, true);\r",
+									"        rateEvent = await api.rateEvent(event2.id, raterUser5.id, true);\r",
+									"        console.log(\"Оценка добавлена. Рейтинг эвента \" + rateEvent.rating);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Должен быть найден только один пользователь по заданному фильтру\", function () {\r",
+									"    pm.expect(target.length).to.eql(1);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Пользователь должен содержать поля: id, email, rating\", function () {\r",
+									"    pm.expect(target[0]).to.have.property('id');\r",
+									"    pm.expect(target[0]).to.have.property('email');\r",
+									"    pm.expect(target[0]).to.have.property('rating');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(target[0].id).to.not.be.null;\r",
+									"    pm.expect(80).equal(target[0].rating, 'Рейтинг эвента должен быть равен 80');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/users?ids={{uid}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"users"
+							],
+							"query": [
+								{
+									"key": "ids",
+									"value": "{{uid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Обновление оценки",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"\r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq);\r",
+									"\r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Добавляем оценку\");\r",
+									"        const rateEvent = await api.rateEvent(event.id, raterUser.id, true);\r",
+									"        console.log(\"Оценка добавлена. Рейтинг эвента \" + rateEvent.rating);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Пользователь должен содержать поля: id, annotation, rating\", function () {\r",
+									"pm.expect(target).to.have.property('id');\r",
+									"pm.expect(target).to.have.property('annotation');\r",
+									"pm.expect(target).to.have.property('rating');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(target.id).to.not.be.null;\r",
+									"    pm.expect(0).equal(target.rating, 'Рейтинг эвента должен быть равен 0');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId/rate?isGood=false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"query": [
+								{
+									"key": "isGood",
+									"value": "false"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удаление оценки",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', raterUser.id);\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"        \r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Добавляем оценку\");\r",
+									"        const rateEvent = await api.rateEvent(event.id, raterUser.id, true);\r",
+									"        console.log(\"Оценка добавлена. Рейтинг эвента \" + rateEvent.rating);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Пользователь должен содержать поля: id, annotation, rating\", function () {\r",
+									"pm.expect(target).to.have.property('id');\r",
+									"pm.expect(target).to.have.property('annotation');\r",
+									"pm.expect(target).to.have.property('rating');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(target.id).to.not.be.null;\r",
+									"    pm.expect(0).equal(target.rating, 'Рейтинг эвента должен быть равен 0');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId/rate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"rate"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rating field checks",
+			"item": [
+				{
+					"name": "Проверка присутствия поля в Пользователе",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', user.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Пользователь должен содержать поля: id, rating\", function () {\r",
+									"pm.expect(target[0]).to.have.property('id');\r",
+									"pm.expect(target[0]).to.have.property('rating');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/users?ids={{uid}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"users"
+							],
+							"query": [
+								{
+									"key": "ids",
+									"value": "{{uid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Проверка присутствия поля в Эвенте",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', user.id);\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"        \r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Добавляем оценку\");\r",
+									"        const rateEvent = await api.rateEvent(event.id, raterUser.id, true);\r",
+									"        console.log(\"Оценка добавлена. Рейтинг эвента \" + rateEvent.rating);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Пользователь должен содержать поля: id, annotation, rating\", function () {\r",
+									"pm.expect(target).to.have.property('id');\r",
+									"pm.expect(target).to.have.property('annotation');\r",
+									"pm.expect(target).to.have.property('rating');\r",
+									"pm.expect(target.initiator).to.have.property('rating');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/events/:eventId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"events",
+								":eventId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "eventId",
+									"value": "{{eid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Проверка присутствия поля в коротком Эвенте",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        console.log(\"Создаем пользователя для эвента\");\r",
+									"        const user = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set('uid', user.id);\r",
+									"        console.log(\"Пользователь \" + user.id);\r",
+									"\r",
+									"        console.log(\"Создаем категорию\");\r",
+									"        const category = await api.addCategory(rnd.getCategory());\r",
+									"        console.log(\"Категория \" + category.id);\r",
+									"\r",
+									"        console.log(\"Создаем эвент\");\r",
+									"        let eventBody = rnd.getEvent(category.id);\r",
+									"        eventBody['requestModeration'] = true\r",
+									"        eventBody['participantLimit'] = 10\r",
+									"        let event = await api.addEvent(user.id, eventBody);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Публикуем эвент\");\r",
+									"        event = await api.publishEvent(event.id);\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Создаём пользователя для оценки\");\r",
+									"        const raterUser = await api.addUser(rnd.getUser());\r",
+									"        console.log(\"Пользователь для оценки \" + raterUser.id);\r",
+									"        \r",
+									"        console.log(\"Делаем запрос на участие\");\r",
+									"        const eventReq = await api.publishParticipationRequest(event.id, raterUser.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Подтверждаем запрос на участие\");\r",
+									"        await api.acceptParticipationRequest(event.id, user.id, eventReq.id);\r",
+									"        console.log(\"Запрос \" + eventReq.id);\r",
+									"        \r",
+									"        console.log(\"Меняем время эвента\");\r",
+									"        await api.changeEventDateForced(event.id, rnd.getDateTime(-10));\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"        \r",
+									"        console.log(\"Сохраняем эвент в переменную\");\r",
+									"        pm.collectionVariables.set(\"eid\", event.id)\r",
+									"        console.log(\"Эвент \" + event.id);\r",
+									"\r",
+									"        console.log(\"Добавляем оценку\");\r",
+									"        const rateEvent = await api.rateEvent(event.id, raterUser.id, true);\r",
+									"        console.log(\"Оценка добавлена. Рейтинг эвента \" + rateEvent.rating);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Пользователь должен содержать поля: id, annotation, rating\", function () {\r",
+									"pm.expect(target[0]).to.have.property('id');\r",
+									"pm.expect(target[0]).to.have.property('annotation');\r",
+									"pm.expect(target[0]).to.have.property('rating');\r",
+									"pm.expect(target[0].initiator).to.have.property('rating');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events?rangeStart=2000-01-01 01:01:01&rangeEnd=2030-01-01 01:01:01",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"events"
+							],
+							"query": [
+								{
+									"key": "rangeStart",
+									"value": "2000-01-01 01:01:01"
+								},
+								{
+									"key": "rangeEnd",
+									"value": "2030-01-01 01:01:01"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"API = class {",
+					"    constructor(postman, verbose = false, baseUrl = \"http://localhost:8080\") {",
+					"        this.baseUrl = baseUrl;",
+					"        this.pm = postman;",
+					"        this._verbose = verbose;",
+					"    }",
+					"",
+					"    async addUser(user, verbose=null) {",
+					"        return this.post(\"/admin/users\", user, \"Ошибка при добавлении нового пользователя: \", verbose);",
+					"    }",
+					"",
+					"    async addCategory(category, verbose=null) {",
+					"        return this.post(\"/admin/categories\", category, \"Ошибка при добавлении новой категории: \", verbose);",
+					"    }",
+					"",
+					"    async addEvent(userId, event, verbose=null) {",
+					"        return this.post(\"/users/\" + userId + \"/events\", event, \"Ошибка при добавлении нового события: \", verbose);",
+					"    }",
+					"",
+					"    async changeEventDateForced(eventId, eventDateTime, verbose=null) {",
+					"        return this.patch(\"/admin/events/\" + eventId + \"/forceDateUpd?eventDate=\" + eventDateTime, null, \"Ошибка при смене даты события\", verbose);",
+					"    }",
+					"",
+					"    async addCompilation(compilation, verbose=null) {",
+					"        return this.post(\"/admin/compilations\", compilation, \"Ошибка при добавлении новой подборки: \", verbose);",
+					"    }",
+					"",
+					"    async publishParticipationRequest(eventId, userId, verbose=null) {",
+					"        return this.post('/users/' + userId + '/requests?eventId=' + eventId, null, \"Ошибка при добавлении нового запроса на участие в событии\", verbose);",
+					"    }",
+					"",
+					"    async publishEvent(eventId, verbose=null) {",
+					"        return this.patch('/admin/events/' + eventId, {stateAction: \"PUBLISH_EVENT\"}, \"Ошибка при публикации события\", verbose);",
+					"    }",
+					"    ",
+					"    async rejectEvent(eventId, verbose=null) {",
+					"        return this.patch('/admin/events/' + eventId, {stateAction: \"REJECT_EVENT\"}, \"Ошибка при отмене события\", verbose);",
+					"    }",
+					"",
+					"    async acceptParticipationRequest(eventId, userId, reqId, verbose=null) {",
+					"        return this.patch('/users/' + userId + '/events/' + eventId + '/requests/', {requestIds:[reqId], status: \"CONFIRMED\"}, \"Ошибка при принятии заявки на участие в событии\", verbose);",
+					"    }",
+					"",
+					"    async rateEvent(eventId, userId, rate, verbose=null) {",
+					"        return this.post('/users/' + userId + '/events/' + eventId + '/rate?isGood=' + rate, null, \"Ошибка при добавлении оценки\", verbose);",
+					"    }",
+					"",
+					"    async findCategory(catId, verbose=null) {",
+					"        return this.get('/categories/' + catId, null, \"Ошибка при поиске категории по id\", verbose);",
+					"    }",
+					"",
+					"    async findCompilation(compId, verbose=null) {",
+					"        return this.get('/compilations/' + compId, null, \"Ошибка при поиске подборки по id\", verbose);",
+					"    }",
+					"",
+					"    async findEvent(eventId, verbose=null) {",
+					"        return this.get('/events/' + eventId, null, \"Ошибка при поиске события по id\", verbose);",
+					"    }",
+					"",
+					"    async findUser(userId, verbose=null) {",
+					"        return this.get('/admin/users?ids=' + userId, null, \"Ошибка при поиске пользователя по id\", verbose);",
+					"    }",
+					"",
+					"    async post(path, body, errorText = \"Ошибка при выполнении post-запроса: \", verbose=null) {",
+					"        return this.sendRequest(\"POST\", path, body, errorText, verbose);",
+					"    }",
+					"",
+					"    async patch(path, body = null, errorText = \"Ошибка при выполнении patch-запроса: \", verbose=null) {",
+					"        return this.sendRequest(\"PATCH\", path, body, errorText, verbose);",
+					"    }",
+					"",
+					"    async get(path, body = null, errorText = \"Ошибка при выполнении get-запроса: \", verbose=null) {",
+					"        return this.sendRequest(\"GET\", path, body, errorText, verbose);",
+					"    }",
+					"",
+					"    async sendRequest(method, path, body=null, errorText = \"Ошибка при выполнении запроса: \", verbose=null) {",
+					"        return new Promise((resolve, reject) => {",
+					"            verbose = verbose == null ? this._verbose : verbose;",
+					"",
+					"            const request = {",
+					"                url: this.baseUrl + path,",
+					"                method: method,",
+					"                body: body == null ? \"\" : JSON.stringify(body),",
+					"                header: { \"Content-Type\": \"application/json\" },",
+					"            };",
+					"",
+					"            if(verbose) {",
+					"                console.log(\"Отправляю запрос: \", request);",
+					"            }",
+					"",
+					"            try {",
+					"                this.pm.sendRequest(request, (error, response) => {",
+					"                    if(error || (response.code >= 400 && response.code <= 599)) {",
+					"                        let err = error ? error : JSON.stringify(response.json());",
+					"                        console.error(\"При выполнении запроса к серверу возникла ошика.\\n\", err,",
+					"                             \"\\nДля отладки проблемы повторите такой же запрос к вашей программе \" + ",
+					"                             \"на локальном компьютере. Данные запроса:\\n\", JSON.stringify(request));",
+					"",
+					"                        reject(new Error(errorText + err));",
+					"                    }",
+					"",
+					"                    if(verbose) {",
+					"                        console.log(\"Результат обработки запроса: код состояния - \", response.code, \", тело: \", response.json());",
+					"                    }",
+					"",
+					"                    resolve(response.json());",
+					"                });",
+					"            } catch(err) {",
+					"                if(verbose) {",
+					"                    console.error(errorText, err);",
+					"                }",
+					"                return Promise.reject(err);",
+					"            }",
+					"        });",
+					"    }",
+					"};",
+					"",
+					"RandomUtils = class {",
+					"    constructor() {}",
+					"",
+					"    getUser() {",
+					"        return {",
+					"            name: pm.variables.replaceIn('{{$randomFullName}}'),",
+					"            email: pm.variables.replaceIn('{{$randomEmail}}')",
+					"        };",
+					"    }",
+					"",
+					"    getCategory() {",
+					"        return {",
+					"            name: pm.variables.replaceIn('{{$randomWord}}') + Math.floor(Math.random() * 100).toString()",
+					"        };",
+					"    }",
+					"",
+					"    getEvent(categoryId) {",
+					"        return {",
+					"            annotation: pm.variables.replaceIn('{{$randomLoremParagraph}}'),",
+					"            category: categoryId,",
+					"            description: pm.variables.replaceIn('{{$randomLoremParagraphs}}'),",
+					"            eventDate: this.getDateTime(),",
+					"            location: {",
+					"                lat: parseFloat(pm.variables.replaceIn('{{$randomLatitude}}')),",
+					"                lon: parseFloat(pm.variables.replaceIn('{{$randomLongitude}}')),",
+					"            },",
+					"            paid: pm.variables.replaceIn('{{$randomBoolean}}'),",
+					"            participantLimit: pm.variables.replaceIn('{{$randomInt}}'),",
+					"            requestModeration: pm.variables.replaceIn('{{$randomBoolean}}'),",
+					"            title: pm.variables.replaceIn('{{$randomLoremSentence}}'),",
+					"        }",
+					"    }",
+					"",
+					"    getCompilation(...eventIds) {",
+					"        return {",
+					"            title: pm.variables.replaceIn('{{$randomLoremSentence}}').slice(0, 50),",
+					"            pinned: pm.variables.replaceIn('{{$randomBoolean}}'),",
+					"            events: eventIds",
+					"        };",
+					"    }",
+					"",
+					"    getDateTime(hourShift = 5, minuteShift=0, yearShift=0) {",
+					"        let moment = require('moment');",
+					"",
+					"        let m = moment();",
+					"        m.add(hourShift, 'hour');",
+					"        m.add(minuteShift, 'minute');",
+					"        m.add(yearShift, 'year');",
+					"",
+					"        return m.format('YYYY-MM-DD HH:mm:ss');",
+					"    }",
+					"",
+					"    getWord(length = 1) {",
+					"        let result = '';",
+					"        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';",
+					"        const charactersLength = characters.length;",
+					"        let counter = 0;",
+					"        while (counter < length) {",
+					"            result += characters.charAt(Math.floor(Math.random() * charactersLength));",
+					"            counter += 1;",
+					"        }",
+					"        return result;",
+					"    }",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "uid",
+			"value": ""
+		},
+		{
+			"key": "eid",
+			"value": ""
+		}
+	]
+}

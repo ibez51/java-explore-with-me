@@ -99,10 +99,12 @@ public class DTOTests {
                         .setId(1)
                         .setInitiator(new UserShortDto()
                                 .setId(1)
-                                .setName("InitiatorName"))
+                                .setName("InitiatorName")
+                                .setRating(100))
                         .setPaid(true)
                         .setTitle("EventTitle")
-                        .setViews(1000)))
+                        .setViews(1000)
+                        .setRating(99)))
                 .setId(1)
                 .setPinned(true)
                 .setTitle("Title");
@@ -117,9 +119,11 @@ public class DTOTests {
         assertThat(result).extractingJsonPathNumberValue("$.events.[0].id").isEqualTo(compilationDto.getEvents().get(0).getId());
         assertThat(result).extractingJsonPathNumberValue("$.events.[0].initiator.id").isEqualTo(compilationDto.getEvents().get(0).getInitiator().getId());
         assertThat(result).extractingJsonPathStringValue("$.events.[0].initiator.name").isEqualTo(compilationDto.getEvents().get(0).getInitiator().getName());
+        assertThat(result).extractingJsonPathNumberValue("$.events.[0].initiator.rating").isEqualTo(compilationDto.getEvents().get(0).getInitiator().getRating());
         assertThat(result).extractingJsonPathBooleanValue("$.events.[0].paid").isEqualTo(compilationDto.getEvents().get(0).getPaid());
         assertThat(result).extractingJsonPathStringValue("$.events.[0].title").isEqualTo(compilationDto.getEvents().get(0).getTitle());
         assertThat(result).extractingJsonPathNumberValue("$.events.[0].views").isEqualTo(compilationDto.getEvents().get(0).getViews());
+        assertThat(result).extractingJsonPathNumberValue("$.events.[0].rating").isEqualTo(compilationDto.getEvents().get(0).getRating());
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(compilationDto.getId());
         assertThat(result).extractingJsonPathBooleanValue("$.pinned").isEqualTo(compilationDto.getPinned());
         assertThat(result).extractingJsonPathStringValue("$.title").isEqualTo(compilationDto.getTitle());
@@ -167,7 +171,8 @@ public class DTOTests {
                 .setId(1)
                 .setInitiator(new UserShortDto()
                         .setId(1)
-                        .setName("UserName"))
+                        .setName("UserName")
+                        .setRating(100))
                 .setLocation(new Location()
                         .setLat(11.11F)
                         .setLon(22.22F))
@@ -177,7 +182,8 @@ public class DTOTests {
                 .setRequestModeration(true)
                 .setState(EventState.PUBLISHED)
                 .setTitle("Title")
-                .setViews(5);
+                .setViews(5)
+                .setRating(99);
 
         JsonContent<EventFullDto> result = jsonEventFullDto.write(eventFullDto);
 
@@ -191,6 +197,7 @@ public class DTOTests {
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(eventFullDto.getId());
         assertThat(result).extractingJsonPathNumberValue("$.initiator.id").isEqualTo(eventFullDto.getInitiator().getId());
         assertThat(result).extractingJsonPathStringValue("$.initiator.name").isEqualTo(eventFullDto.getInitiator().getName());
+        assertThat(result).extractingJsonPathNumberValue("$.initiator.rating").isEqualTo(eventFullDto.getInitiator().getRating());
         assertThat(result).extractingJsonPathNumberValue("$.location.lat").isEqualTo((double) Math.round(eventFullDto.getLocation().getLat().doubleValue() * 100) / 100);
         assertThat(result).extractingJsonPathNumberValue("$.location.lon").isEqualTo((double) Math.round(eventFullDto.getLocation().getLon().doubleValue() * 100) / 100);
         assertThat(result).extractingJsonPathBooleanValue("$.paid").isEqualTo(eventFullDto.getPaid());
@@ -200,6 +207,7 @@ public class DTOTests {
         assertThat(result).extractingJsonPathStringValue("$.state").isEqualTo(eventFullDto.getState().name());
         assertThat(result).extractingJsonPathStringValue("$.title").isEqualTo(eventFullDto.getTitle());
         assertThat(result).extractingJsonPathNumberValue("$.views").isEqualTo(eventFullDto.getViews());
+        assertThat(result).extractingJsonPathNumberValue("$.rating").isEqualTo(eventFullDto.getRating());
     }
 
     @Test
@@ -214,10 +222,12 @@ public class DTOTests {
                 .setId(1)
                 .setInitiator(new UserShortDto()
                         .setId(1)
-                        .setName("InitiatorName"))
+                        .setName("InitiatorName")
+                        .setRating(100))
                 .setPaid(true)
                 .setTitle("EventTitle")
-                .setViews(1000);
+                .setViews(1000)
+                .setRating(99);
 
         JsonContent<EventShortDto> result = jsonEventShortDto.write(eventShortDto);
 
@@ -229,9 +239,11 @@ public class DTOTests {
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(eventShortDto.getId());
         assertThat(result).extractingJsonPathNumberValue("$.initiator.id").isEqualTo(eventShortDto.getInitiator().getId());
         assertThat(result).extractingJsonPathStringValue("$.initiator.name").isEqualTo(eventShortDto.getInitiator().getName());
+        assertThat(result).extractingJsonPathNumberValue("$.initiator.rating").isEqualTo(eventShortDto.getInitiator().getRating());
         assertThat(result).extractingJsonPathBooleanValue("$.paid").isEqualTo(eventShortDto.getPaid());
         assertThat(result).extractingJsonPathStringValue("$.title").isEqualTo(eventShortDto.getTitle());
         assertThat(result).extractingJsonPathNumberValue("$.views").isEqualTo(eventShortDto.getViews());
+        assertThat(result).extractingJsonPathNumberValue("$.rating").isEqualTo(eventShortDto.getRating());
     }
 
     @Test
@@ -404,24 +416,28 @@ public class DTOTests {
         UserDto userDto = new UserDto()
                 .setEmail("Email")
                 .setId(1)
-                .setName("Name");
+                .setName("Name")
+                .setRating(99);
 
         JsonContent<UserDto> result = jsonUserDto.write(userDto);
 
         assertThat(result).extractingJsonPathStringValue("$.email").isEqualTo(userDto.getEmail());
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(userDto.getId());
         assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo(userDto.getName());
+        assertThat(result).extractingJsonPathNumberValue("$.rating").isEqualTo(userDto.getRating());
     }
 
     @Test
     public void testUserShortDto() throws IOException {
         UserShortDto userShortDto = new UserShortDto()
                 .setId(1)
-                .setName("Name");
+                .setName("Name")
+                .setRating(99);
 
         JsonContent<UserShortDto> result = jsonUserShortDto.write(userShortDto);
 
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(userShortDto.getId());
         assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo(userShortDto.getName());
+        assertThat(result).extractingJsonPathNumberValue("$.rating").isEqualTo(userShortDto.getRating());
     }
 }

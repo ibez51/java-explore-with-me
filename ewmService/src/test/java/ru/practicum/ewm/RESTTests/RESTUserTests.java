@@ -35,7 +35,8 @@ public class RESTUserTests {
     private final UserDto userDto = new UserDto()
             .setId(1)
             .setName("Name")
-            .setEmail("email@email.email");
+            .setEmail("email@email.email")
+            .setRating(100);
 
     @Test
     public void testGetUsers() throws Exception {
@@ -48,28 +49,32 @@ public class RESTUserTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id", is(userDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.[0].name", is(userDto.getName())))
-                .andExpect(jsonPath("$.[0].email", is(userDto.getEmail())));
+                .andExpect(jsonPath("$.[0].email", is(userDto.getEmail())))
+                .andExpect(jsonPath("$.[0].rating", is(userDto.getRating()), Integer.class));
 
         mvc.perform(get("/admin/users?ids=1")
                         .accept(MediaType.ALL_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id", is(userDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.[0].name", is(userDto.getName())))
-                .andExpect(jsonPath("$.[0].email", is(userDto.getEmail())));
+                .andExpect(jsonPath("$.[0].email", is(userDto.getEmail())))
+                .andExpect(jsonPath("$.[0].rating", is(userDto.getRating()), Integer.class));
 
         mvc.perform(get("/admin/users?size=10")
                         .accept(MediaType.ALL_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id", is(userDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.[0].name", is(userDto.getName())))
-                .andExpect(jsonPath("$.[0].email", is(userDto.getEmail())));
+                .andExpect(jsonPath("$.[0].email", is(userDto.getEmail())))
+                .andExpect(jsonPath("$.[0].rating", is(userDto.getRating()), Integer.class));
 
         mvc.perform(get("/admin/users?from=0")
                         .accept(MediaType.ALL_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id", is(userDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.[0].name", is(userDto.getName())))
-                .andExpect(jsonPath("$.[0].email", is(userDto.getEmail())));
+                .andExpect(jsonPath("$.[0].email", is(userDto.getEmail())))
+                .andExpect(jsonPath("$.[0].rating", is(userDto.getRating()), Integer.class));
 
         mvc.perform(get("/admin/users?from=-1")
                         .accept(MediaType.ALL_VALUE))

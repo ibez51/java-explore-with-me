@@ -64,4 +64,25 @@ public class EventPrivateController {
                                                                  @Valid @RequestBody EventRequestStatusUpdateRequestDto eventRequestStatusUpdateRequestDto) {
         return eventService.updateRequestStatus(userId, eventId, eventRequestStatusUpdateRequestDto);
     }
+
+    @PostMapping("/{eventId}/rate")
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventFullDto rateEvent(@PathVariable(name = "userId") Integer userId,
+                                  @PathVariable(name = "eventId") Integer eventId,
+                                  @RequestParam(name = "isGood") Boolean isGood) {
+        return eventService.rateEvent(userId, eventId, isGood);
+    }
+
+    @PatchMapping("/{eventId}/rate")
+    public EventFullDto reRateEvent(@PathVariable(name = "userId") Integer userId,
+                                    @PathVariable(name = "eventId") Integer eventId,
+                                    @RequestParam(name = "isGood") Boolean isGood) {
+        return eventService.rateEvent(userId, eventId, isGood);
+    }
+
+    @DeleteMapping("/{eventId}/rate")
+    public EventFullDto removeRate(@PathVariable(name = "userId") Integer userId,
+                                   @PathVariable(name = "eventId") Integer eventId) {
+        return eventService.deleteRate(userId, eventId);
+    }
 }

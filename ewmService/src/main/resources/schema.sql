@@ -50,3 +50,10 @@ CREATE TABLE IF NOT EXISTS compilation_event_link (
   event_id BIGINT NOT NULL REFERENCES events(id) ON DELETE RESTRICT,
   PRIMARY KEY(compilation_id, event_id)
 );
+
+CREATE TABLE IF NOT EXISTS event_rating (
+    event_id BIGINT NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+    rating_value SMALLINT NOT NULL,
+    rating_owner BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY(event_id, rating_owner)
+)
