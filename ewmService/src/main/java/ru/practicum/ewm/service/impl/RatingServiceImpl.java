@@ -2,6 +2,7 @@ package ru.practicum.ewm.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dao.RatingRepository;
 import ru.practicum.ewm.dto.rating.RatingMapper;
 import ru.practicum.ewm.model.Event;
@@ -21,6 +22,7 @@ public class RatingServiceImpl implements RatingService {
     private final RatingMapper ratingMapper;
 
     @Override
+    @Transactional
     public void createOrUpdateRate(Event event,
                                    User user,
                                    Boolean isGood) {
@@ -28,6 +30,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    @Transactional
     public void removeRate(Event event,
                            User user) {
         ratingRepository.delete(ratingMapper.toRating(event, user, 1));

@@ -498,6 +498,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto rateEvent(Integer userId,
                                   Integer eventId,
                                   Boolean isGood) {
@@ -529,6 +530,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto deleteRate(Integer userId,
                                    Integer eventId) {
         Event event = findEventByIdAndState(eventId, EventState.PUBLISHED);
