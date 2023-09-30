@@ -31,4 +31,13 @@ public interface RequestRepository extends JpaRepository<Request, Integer> {
             nativeQuery = true)
     boolean isRequestByUserAndEventExists(@Param("userId") Integer userId,
                                           @Param("eventId") Integer eventId);
+
+    @Query(value = "select case when count(*) > 0 then true else false end from requests requests " +
+            "where requests.requester_id = :userId " +
+            "and requests.event_id = :eventId " +
+            "and requests.status = :status ",
+            nativeQuery = true)
+    boolean isRequestByUserAndEventAndStatusExists(@Param("userId") Integer userId,
+                                                   @Param("eventId") Integer eventId,
+                                                   @Param("status") String status);
 }

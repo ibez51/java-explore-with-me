@@ -9,9 +9,11 @@ import ru.practicum.ewm.dto.user.NewUserRequestDto;
 import ru.practicum.ewm.dto.user.UserDto;
 import ru.practicum.ewm.dto.user.UserMapper;
 import ru.practicum.ewm.model.User;
+import ru.practicum.ewm.service.RatingService;
 import ru.practicum.ewm.service.UserService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final RatingService ratingService;
 
     @Override
     public List<UserDto> getUsers(List<Integer> ids,
@@ -30,9 +33,11 @@ public class UserServiceImpl implements UserService {
         List<User> userList = Objects.nonNull(ids) ?
                 userRepository.findByIdInOrderByIdAsc(ids, page).getContent() :
                 userRepository.findAll(page).getContent();
+        Map<Integer, Integer> userRatingList = ratingService.calcRateForUserList(ids);
 
         return userList.stream()
-                .map(userMapper::toDto)
+                .map(x -> userMapper.toDto(x,
+                        userRatingList.getOrDefault(x.getId(), 0)))
                 .collect(Collectors.toList());
     }
 
@@ -40,7 +45,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto createUser(NewUserRequestDto newUserRequestDto) {
         User user = userRepository.save(userMapper.toUser(newUserRequestDto));
-        return userMapper.toDto(user);
+        return userMapper.toDto(user, 0);
     }
 
     @Override

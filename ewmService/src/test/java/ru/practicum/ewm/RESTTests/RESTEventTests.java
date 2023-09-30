@@ -52,7 +52,8 @@ public class RESTEventTests {
             .setId(1)
             .setInitiator(new UserShortDto()
                     .setId(1)
-                    .setName("UserName"))
+                    .setName("UserName")
+                    .setRating(100))
             .setLocation(new Location()
                     .setLat(11.11F)
                     .setLon(22.22F))
@@ -62,7 +63,8 @@ public class RESTEventTests {
             .setRequestModeration(true)
             .setState(EventState.PUBLISHED)
             .setTitle("Title")
-            .setViews(5);
+            .setViews(5)
+            .setRating(99);
 
     private final EventShortDto eventShortDto = new EventShortDto()
             .setAnnotation("Annotation")
@@ -74,10 +76,12 @@ public class RESTEventTests {
             .setId(1)
             .setInitiator(new UserShortDto()
                     .setId(1)
-                    .setName("Name"))
+                    .setName("Name")
+                    .setRating(100))
             .setPaid(true)
             .setTitle("Title")
-            .setViews(10);
+            .setViews(10)
+            .setRating(99);
 
     @Test
     public void testFindEvents() throws Exception {
@@ -133,13 +137,15 @@ public class RESTEventTests {
                 .andExpect(jsonPath("$.id", is(eventFullDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.initiator.id", is(eventFullDto.getInitiator().getId()), Integer.class))
                 .andExpect(jsonPath("$.initiator.name", is(eventFullDto.getInitiator().getName())))
+                .andExpect(jsonPath("$.initiator.rating", is(eventFullDto.getInitiator().getRating()), Integer.class))
                 .andExpect(jsonPath("$.paid", is(eventFullDto.getPaid())))
                 .andExpect(jsonPath("$.participantLimit", is(eventFullDto.getParticipantLimit()), Integer.class))
                 .andExpect(jsonPath("$.publishedOn", is(eventFullDto.getPublishedOn().format(DateTimeFormatterUtility.FORMATTER))))
                 .andExpect(jsonPath("$.requestModeration", is(eventFullDto.getRequestModeration())))
                 .andExpect(jsonPath("$.state", is(eventFullDto.getState().name())))
                 .andExpect(jsonPath("$.title", is(eventFullDto.getTitle())))
-                .andExpect(jsonPath("$.views", is(eventFullDto.getViews()), Integer.class));
+                .andExpect(jsonPath("$.views", is(eventFullDto.getViews()), Integer.class))
+                .andExpect(jsonPath("$.rating", is(eventFullDto.getRating()), Integer.class));
     }
 
     @Test
@@ -159,9 +165,11 @@ public class RESTEventTests {
                 .andExpect(jsonPath("$.[0].id", is(eventShortDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.[0].initiator.id", is(eventShortDto.getInitiator().getId()), Integer.class))
                 .andExpect(jsonPath("$.[0].initiator.name", is(eventShortDto.getInitiator().getName())))
+                .andExpect(jsonPath("$.[0].initiator.rating", is(eventShortDto.getInitiator().getRating()), Integer.class))
                 .andExpect(jsonPath("$.[0].paid", is(eventShortDto.getPaid())))
                 .andExpect(jsonPath("$.[0].title", is(eventShortDto.getTitle())))
-                .andExpect(jsonPath("$.[0].views", is(eventShortDto.getViews()), Integer.class));
+                .andExpect(jsonPath("$.[0].views", is(eventShortDto.getViews()), Integer.class))
+                .andExpect(jsonPath("$.[0].rating", is(eventShortDto.getRating()), Integer.class));
 
         mvc.perform(get("/users/1/events?from=-1")
                         .accept(MediaType.ALL_VALUE))
@@ -206,13 +214,15 @@ public class RESTEventTests {
                 .andExpect(jsonPath("$.id", is(eventFullDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.initiator.id", is(eventFullDto.getInitiator().getId()), Integer.class))
                 .andExpect(jsonPath("$.initiator.name", is(eventFullDto.getInitiator().getName())))
+                .andExpect(jsonPath("$.initiator.rating", is(eventFullDto.getInitiator().getRating()), Integer.class))
                 .andExpect(jsonPath("$.paid", is(eventFullDto.getPaid())))
                 .andExpect(jsonPath("$.participantLimit", is(eventFullDto.getParticipantLimit()), Integer.class))
                 .andExpect(jsonPath("$.publishedOn", is(eventFullDto.getPublishedOn().format(DateTimeFormatterUtility.FORMATTER))))
                 .andExpect(jsonPath("$.requestModeration", is(eventFullDto.getRequestModeration())))
                 .andExpect(jsonPath("$.state", is(eventFullDto.getState().name())))
                 .andExpect(jsonPath("$.title", is(eventFullDto.getTitle())))
-                .andExpect(jsonPath("$.views", is(eventFullDto.getViews()), Integer.class));
+                .andExpect(jsonPath("$.views", is(eventFullDto.getViews()), Integer.class))
+                .andExpect(jsonPath("$.rating", is(eventFullDto.getRating()), Integer.class));
 
         newEventDto.setAnnotation("1");
         mvc.perform(post("/users/1/events")
@@ -324,6 +334,50 @@ public class RESTEventTests {
                 .andExpect(jsonPath("$.rejectedRequests.[0].id", is(eventRequestStatusUpdateResultDto.getRejectedRequests().get(0).getId()), Integer.class))
                 .andExpect(jsonPath("$.rejectedRequests.[0].requester", is(eventRequestStatusUpdateResultDto.getRejectedRequests().get(0).getRequester()), Integer.class))
                 .andExpect(jsonPath("$.rejectedRequests.[0].status", is(eventRequestStatusUpdateResultDto.getRejectedRequests().get(0).getStatus().name())));
+    }
+
+    @Test
+    public void testRateEvent() throws Exception {
+        doReturn(eventFullDto)
+                .when(eventService)
+                .rateEvent(anyInt(), anyInt(), anyBoolean());
+
+        mvc.perform(post("/users/1/events/1/rate?isGood=false")
+                        .accept(MediaType.ALL_VALUE))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.rating", is(eventFullDto.getRating())));
+
+        mvc.perform(post("/users/1/events/1/rate")
+                        .accept(MediaType.ALL_VALUE))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testReRateEvent() throws Exception {
+        doReturn(eventFullDto)
+                .when(eventService)
+                .rateEvent(anyInt(), anyInt(), anyBoolean());
+
+        mvc.perform(patch("/users/1/events/1/rate?isGood=false")
+                        .accept(MediaType.ALL_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.rating", is(eventFullDto.getRating())));
+
+        mvc.perform(patch("/users/1/events/1/rate")
+                        .accept(MediaType.ALL_VALUE))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testRemoveRate() throws Exception {
+        doReturn(eventFullDto)
+                .when(eventService)
+                .deleteRate(anyInt(), anyInt());
+
+        mvc.perform(delete("/users/1/events/1/rate")
+                        .accept(MediaType.ALL_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.rating", is(eventFullDto.getRating())));
     }
 
     @Test

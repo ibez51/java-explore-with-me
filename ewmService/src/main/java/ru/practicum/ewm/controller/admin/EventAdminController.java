@@ -38,4 +38,10 @@ public class EventAdminController {
                                     @Valid @RequestBody UpdateEventAdminRequestDto updateEventAdminRequestDto) {
         return eventService.updateEvent(eventId, updateEventAdminRequestDto);
     }
+
+    @PatchMapping("/{eventId}/forceDateUpd")
+    public EventFullDto updateEventDateForce(@PathVariable(name = "eventId") Integer eventId,
+                                             @RequestParam(name = "eventDate") @DateTimeFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss") LocalDateTime eventDateTime) {
+        return eventService.updateEventDateForce(eventId, eventDateTime);
+    }
 }

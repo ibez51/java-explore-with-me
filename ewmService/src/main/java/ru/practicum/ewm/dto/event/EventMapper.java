@@ -17,7 +17,9 @@ import java.util.List;
 public interface EventMapper {
     @Mapping(source = "category", target = "category")
     @Mapping(source = "event.id", target = "id")
-    EventShortDto toShortDto(Event event, Category category, User initiator, Integer confirmedRequests, Integer views);
+    @Mapping(source = "initiator", target = "initiator")
+    @Mapping(source = "userRating", target = "initiator.rating")
+    EventShortDto toShortDto(Event event, Category category, User initiator, Integer confirmedRequests, Integer views, Integer rating, Integer userRating);
 
     @Mapping(source = "userId", target = "initiator.id")
     @Mapping(source = "location.lat", target = "locationLat")
@@ -35,7 +37,8 @@ public interface EventMapper {
     @Mapping(source = "event.locationLat", target = "location.lat")
     @Mapping(source = "event.locationLon", target = "location.lon")
     @Mapping(source = "event.id", target = "id")
-    EventFullDto toFullDto(Event event, Category category, User initiator, Integer confirmedRequests, Integer views);
+    @Mapping(source = "userRating", target = "initiator.rating")
+    EventFullDto toFullDto(Event event, Category category, User initiator, Integer confirmedRequests, Integer views, Integer rating, Integer userRating);
 
     @Mapping(target = "annotation", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "category", source = "category", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
